@@ -24,3 +24,31 @@ SET PASSWORD = 'hong456'
 WHERE userid='hong123'AND password='hong123';
 
 DELETE FROM usertbl WHERE userid='hong123'AND password='hong1234';
+
+CREATE TABLE booktbl(
+	code number(4) PRIMARY KEY,
+	title varchar2(50) NOT null,
+	writer varchar2(50) NOT null,
+	price number(10) NOT null
+);
+
+ALTER TABLE BOOKTBL ADD description varchar2(1000);
+
+INSERT INTO booktbl VALUES (1000,'자바의 정석','신용균',25000);
+INSERT INTO booktbl VALUES (1001,'자바의 신','강신용',25000);
+INSERT INTO booktbl VALUES (1002,'자바의 1000제','남궁성',25000);
+INSERT INTO booktbl VALUES (1003,'채식주의자','한강',13500);
+INSERT INTO booktbl VALUES (1004,'당신이 누군가를 죽였다','히가시노 게이노',17820);
+
+-- 전체 조회
+SELECT * FROM BOOKTBL b;
+-- 도서번호 1000 번인 도서 조회
+SELECT * FROM BOOKTBL b WHERE CODE = 1000; 
+-- 도서번호 1001 번인 도서 가격 수정
+UPDATE BOOKTBL SET PRICE = 15000 WHERE CODE = 1001;
+-- 도서번호 1001 번인 도서 가격 및 상세설명 수정
+UPDATE BOOKTBL SET PRICE = 15000, description='상세설명' WHERE CODE = 1001;
+-- 도서번호 1004 번인 도서 삭제
+DELETE FROM BOOKTBL b WHERE code = 1004;
+-- 도서명 '자바' 키워드가 들어있는 도서 조회
+SELECT * FROM BOOKTBL b WHERE TITLE LIKE '%자바%'; 
