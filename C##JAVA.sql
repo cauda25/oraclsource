@@ -52,3 +52,20 @@ UPDATE BOOKTBL SET PRICE = 15000, description='상세설명' WHERE CODE = 1001;
 DELETE FROM BOOKTBL b WHERE code = 1004;
 -- 도서명 '자바' 키워드가 들어있는 도서 조회
 SELECT * FROM BOOKTBL b WHERE TITLE LIKE '%자바%'; 
+ALTER TABLE BOOKTBL MODIFY title varchar2(100);
+
+
+CREATE TABLE mamberTBL(
+	userid varchar2(20) PRIMARY KEY,
+	name varchar2(20) NOT NULL,
+	password varchar2(20) NOT NULL
+);
+ALTER TABLE mamberTBL RENAME TO MEMBERTBL;
+
+INSERT INTO mamberTBL(userid,name,password) values('hong123','홍길동','hong123');
+
+--아이디와 비밀번호가 일치하는 회원 조회(로그인)
+SELECT * FROM MEMBERTBL m WHERE USERID='hong123'AND PASSWORD='hong123';
+
+-- 중복 아이디 검사
+SELECT * FROM MEMBERTBL m WHERE USERID='hong123'
