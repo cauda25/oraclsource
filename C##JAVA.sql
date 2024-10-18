@@ -49,11 +49,19 @@ UPDATE BOOKTBL SET PRICE = 15000 WHERE CODE = 1001;
 -- 도서번호 1001 번인 도서 가격 및 상세설명 수정
 UPDATE BOOKTBL SET PRICE = 15000, description='상세설명' WHERE CODE = 1001;
 -- 도서번호 1004 번인 도서 삭제
-DELETE FROM BOOKTBL b WHERE code = 1004;
+DELETE FROM BOOKTBL b WHERE code = 1212;
 -- 도서명 '자바' 키워드가 들어있는 도서 조회
 SELECT * FROM BOOKTBL b WHERE TITLE LIKE '%자바%'; 
 ALTER TABLE BOOKTBL MODIFY title varchar2(100);
 
+-- 더미 데이터 삽입
+CREATE SEQUENCE BOOK_SEQ
+START WITH 2000;
+
+INSERT INTO BOOKTBL(CODE,TITLE,WRITER,PRICE)
+(SELECT BOOK_SEQ.nextval,TITLE,WRITER,PRICE FROM BOOKTBL b);
+
+SELECT count(*) FROM BOOKTBL b;
 
 CREATE TABLE mamberTBL(
 	userid varchar2(20) PRIMARY KEY,
@@ -69,3 +77,29 @@ SELECT * FROM MEMBERTBL m WHERE USERID='hong123'AND PASSWORD='hong123';
 
 -- 중복 아이디 검사
 SELECT * FROM MEMBERTBL m WHERE USERID='hong123'
+
+-- 비밀번호 변경
+UPDATE MEMBERTBL
+SET PASSWORD = 'hong456'
+WHERE userid='hong123'AND password='hong123';
+
+-- board
+-- bno(pk),name(varchar2-20),password(varchar2-20),title(varchar2-100),content(varchar2-2000),file(varchar2-100),re_ref,re_lev,re_seq,readcnt,regdate(date-sysdate)
+CREATE TABLE board(
+	bno number(10) PRIMARY KEY,
+	name varchar2(20) NOT NULL,
+	password varchar2(20) NOT NULL,
+	title varchar2(100) NOT NULL,
+	content varchar2(2000) NOT NULL,
+	file_f varchar2(100) NOT NULL,
+	re_ref number(10) NOT NULL,
+	re_lev number(10) NOT NULL,
+	re_seq number(10) NOT NULL,
+	readcnt number(10) DEFAULT 0,
+	regdate DATE DEFAULT sysdate
+);
+
+-- 시퀀스 생성 board_seq
+CREATE SEQUENCE board_seq;
+
+
