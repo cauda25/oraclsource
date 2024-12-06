@@ -102,4 +102,105 @@ CREATE TABLE board(
 -- 시퀀스 생성 board_seq
 CREATE SEQUENCE board_seq;
 
+-- board attach not null==> null 가능
+ALTER TABLE BOARD MODIFY file_f varchar2(100) NULL;
 
+INSERT INTO BOARD(bno,name,password,title,content,re_ref,re_lev,re_seq)
+values(board_seq.nextval, 'hong','12345','board 작성','board 작성',board_seq.currval,0,0)
+
+select bno,name,title,readcnt,regdate from board;
+
+select bno,name,title,readcnt,regdate from board  order BY bno DESC;
+
+select * from board where bno = 1;
+
+--수정
+--bno와 password 가 일치 시 title,content 수정
+UPDATE BOARD SET title='변경제목' , content='변경내용' WHERE bno=1 AND password='12345';
+
+-- 조회수 업데이트
+UPDATE BOARD 
+SET READCNT = READCNT +1
+WHERE bno=3;
+
+-- 더미 데이터
+INSERT INTO BOARD(bno,name,password,title,content,re_ref,re_lev,re_seq)
+(SELECT board_seq.nextval,name,PASSWORD,TITLE,CONTENT,board_seq.currval,RE_LEV,RE_SEQ FROM BOARD b);
+
+SELECT COUNT(*) FROM BOARD b; 
+
+-- 댓글처리
+
+-- 가장 최신글에 댓글 처리
+SELECT
+	*
+FROM
+	BOARD b
+WHERE
+	bno =(
+	SELECT
+		max(bno)
+	FROM
+		BOARD b);
+ 
+-- 그룹 개념(re_ref : 부모글의 re_ref 넣어주기)
+-- re_lev : 부모글 re_lev + 1
+-- re_seq : 부모글 re_seq + 1
+INSERT INTO BOARD(bno,name,password,title,content,re_ref,re_lev,re_seq) 
+values(board_seq.nextval, 'hong','12345','board 작성','board 작성',611,1,1);
+
+--UPDATE BOARD SET RE_LEV=1, RE_SEQ=1 WHERE bno=612;
+
+-- 원본글과 댓글 함께 조회
+SELECT * FROM BOARD b WHERE RE_REF =611;
+
+-- 두번째 댓글추가 (최신순 조회:re_seq)
+-- re_seq 낮을수록 최신글
+
+-- 원본글
+-- ㄴ 댓글2
+--   ㄴ 댓글22
+-- ㄴ 댓글1
+
+-- 댓글2 추가
+-- 먼저 들어간 댓글이 있다면 re_seq + 1해야 함
+-- UPDATE BOARD SET RE_SEQ = RE_SEQ +1 WHERE RE_REF =부모글 AND RE_SEQ >부모글 re_seq;
+UPDATE BOARD SET RE_SEQ = RE_SEQ +1 WHERE RE_REF =611 AND RE_SEQ >0;
+
+INSERT INTO BOARD(bno,name,password,title,content,re_ref,re_lev,re_seq) 
+values(board_seq.nextval, 'hong','12345','댓글 board 작성','댓글 board 작성',611,1,1);
+
+SELECT * FROM BOARD b WHERE RE_REF =611 ORDER BY RE_REF DESC, RE_SEQ ASC;
+
+-- 검색
+-- 조건 title or content or name
+-- 검색어
+select bno,name,title,readcnt,regdate,re_lev from board WHERE TITLE LIKE '%안녕%' order by RE_REF DESC, RE_SEQ ASC;
+select bno,name,title,readcnt,regdate,re_lev from board WHERE CONTENT LIKE '%작성%' order by RE_REF DESC, RE_SEQ ASC;
+select bno,name,title,readcnt,regdate,re_lev from board WHERE NAME LIKE '%홍%' order by RE_REF DESC, RE_SEQ ASC;
+
+-- 오라클 페이지 나누기
+-- 정렬이 완료된 후 번호를 매겨서 일부분 추출
+SELECT rownum, bno,name,title,readcnt,regdate,re_lev from board order by RE_REF DESC, RE_SEQ ASC;
+
+SELECT rownum, bno,name,title,readcnt,regdate,re_lev from board order by BNO DESC;
+
+SELECT rnum,bno,name,title,readcnt,regdate,re_lev
+FROM (SELECT rownum rnum,bno,name,title,readcnt,regdate,re_lev
+FROM (SELECT bno,name,title,readcnt,regdate,re_lev from board order by RE_REF DESC, RE_SEQ ASC)
+WHERE rownum <= 20)
+WHERE rnum > 10;
+
+-- 1 page요청 : rownum <= 10 rnum >0
+-- 2 page요청 : rownum <= 20 rnum >10
+
+-- rownum : 1page * 10 = 10
+-- rnum : (1page -1 ) * 10;
+
+-- 전체 개수
+SELECT count(*) FROM BOARD;
+
+-- 검색어 기준으로 전체개수
+SELECT count(*) FROM BOARD WHERE TITLE LIKE '%안녕%';
+SELECT count(*) FROM BOARD WHERE CONTENT LIKE '%안녕%';
+SELECT count(*) FROM BOARD WHERE NAME LIKE '%안녕%';

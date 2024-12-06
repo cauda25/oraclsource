@@ -18,7 +18,7 @@ GRANT CREATE SYNONYM TO SCOTT;
 
 -- 공통 사용자 또는 롤 이름이 부적합합니다.
 -- 오라클 버전의 변화로 사용자 생성 시 C## 붙이는 걸로 변경
-CREATE USER c##java identified BY 12345
+CREATE USER c##movieuser identified BY 12345
 DEFAULT TABLESPACE USERS
 TEMPORARY TABLESPACE TEMP
 quota 10M ON USERS;
@@ -54,4 +54,19 @@ GRANT CREATE SESSION,CREATE TABLE TO C##java;
 -- 1) CONNECT 롤 : CREATE SESSION 만 가지고 있음
 -- 2) RESOURCE 롤 : CREATE TABLE, CREATE SEQUENCD, CREATE TRIGGER, CREATE PROCEDURE 권한 들어 있음
 -- 사용자 생성 후 CONNECT,RESOURCE 롤 두개를 부여함
-GRANT CONNECT,RESOURCE TO c##java;
+GRANT CONNECT,RESOURCE TO c##movieuser;
+
+
+
+
+
+
+
+
+-- 유저 테이블 생성
+CREATE USER c##projectuser identified BY 12345
+DEFAULT TABLESPACE USERS
+TEMPORARY TABLESPACE TEMP
+quota 10M ON USERS;
+
+GRANT CONNECT,RESOURCE TO c##projectuser;
